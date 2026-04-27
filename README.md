@@ -5,6 +5,8 @@ Localbricks is a local training stack for Databricks-style data engineering work
 It gives each developer:
 
 - JupyterLab notebooks
+- JupyterLab LSP and the Python language server
+- Jupyter AI configured for OpenAI
 - Apache Spark 3.5.3
 - Delta Lake 3.2.1
 - Unity Catalog OSS
@@ -28,7 +30,15 @@ Clone the repository, then create your local environment file:
 cp .env.example .env
 ```
 
-Edit `.env` and set `OPENAI_API_KEY` if you want to run the OpenAI examples. Leave it empty if you only want Spark, Delta, Unity Catalog, and PDF processing.
+Edit `.env` and set `OPENAI_API_KEY` if you want to run the OpenAI and Jupyter AI examples. Leave it empty if you only want Spark, Delta, Unity Catalog, LSP, and PDF processing.
+
+Optional OpenAI-related settings:
+
+```bash
+OPENAI_MODEL=gpt-4o-mini
+JUPYTER_AI_MODEL=gpt-4o-mini
+JUPYTER_AI_EMBEDDINGS_MODEL=text-embedding-3-small
+```
 
 Start the stack:
 
@@ -41,6 +51,14 @@ Open JupyterLab:
 ```text
 http://localhost:8888/lab?token=localbricks
 ```
+
+JupyterLab starts with:
+
+- `jupyterlab-lsp` and `python-lsp-server` for Python code intelligence
+- Jupyter AI's chat UI configured to use the OpenAI provider
+- Jupyter AI magics configured to default to `openai-chat:${JUPYTER_AI_MODEL}`
+
+The OpenAI API key is read from `.env` through `OPENAI_API_KEY`; it is not committed into Jupyter configuration.
 
 Unity Catalog runs inside the Compose network at:
 
@@ -101,6 +119,7 @@ notebooks/01_localbricks_databricks_basics.ipynb
 The notebook demonstrates:
 
 - loading environment variables
+- using Jupyter AI magics with OpenAI
 - starting Spark with Delta Lake and Unity Catalog
 - querying Unity Catalog schemas and tables
 - creating and querying Delta tables
@@ -134,7 +153,7 @@ If you have `uv` installed on your host:
 
 ```bash
 uv sync
-uv run python -c "import pyspark, delta, langchain, openai"
+uv run python -c "import jupyter_ai, jupyterlab_lsp, pylsp, pyspark, delta, langchain, openai"
 ```
 
 The Docker image installs from the same `pyproject.toml`, so host-side `uv` checks are optional.
