@@ -1,0 +1,32 @@
+[project]
+name = "localbricks"
+version = "0.1.0"
+description = "Local Databricks-like notebook training environment with Spark, Delta Lake, Unity Catalog, LangChain, OpenAI, and PDF processing."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "delta-spark==3.2.1",
+    "ipykernel>=6.29.5",
+    "jupyterlab>=4.2.5",
+    "langchain>=0.3.7",
+    "langchain-community>=0.3.7",
+    "langchain-openai>=0.2.8",
+    "langchain-text-splitters>=0.3.2",
+    "numpy>=1.26.4,<2.0",
+    "openai>=1.54.0",
+    "pandas>=2.2.3",
+    "pdfplumber>=0.11.4",
+    "pyarrow>=17.0.0",
+    "pymupdf>=1.24.13",
+    "pypdf>=5.1.0",
+    "pyspark==3.5.3",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
+    "tiktoken>=0.8.0",
+    "unitycatalog-ai>=0.2.0",
+    "unitycatalog-langchain>=0.2.0",
+    "unitycatalog-openai>=0.2.0",
+]
+
+[tool.uv]
+package = false

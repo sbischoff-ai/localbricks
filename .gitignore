@@ -1,0 +1,23 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Local runtime state
+spark-warehouse/
+metastore_db/
+derby.log
+*.log
+
+# Training data and generated Delta tables can be large or sensitive.
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/pdfs/
+data/raw/pdfs/*
+!data/raw/pdfs/.gitkeep
+warehouse/*
+!warehouse/.gitkeep
+
+# Local coding agent configs
+.codex/
