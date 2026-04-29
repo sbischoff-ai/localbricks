@@ -1,6 +1,7 @@
 .git/
 .codex/
 .env
+docker-compose.override.yaml
 .venv/
 __pycache__/
 .ipynb_checkpoints/

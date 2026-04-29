@@ -1,5 +1,12 @@
 FROM python:3.11-slim-bookworm
 
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG NO_PROXY
+ARG http_proxy
+ARG https_proxy
+ARG no_proxy
+
 ENV DEBIAN_FRONTEND=noninteractive \
     JUPYTER_CONFIG_DIR=/workspace/.jupyter \
     JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 \
@@ -31,6 +38,7 @@ COPY .jupyter /workspace/.jupyter
 RUN useradd --create-home --shell /bin/bash notebook \
     && mkdir -p /workspace/notebooks /workspace/data /workspace/warehouse /home/notebook/.ivy2 /home/notebook/.ipython/profile_default \
     && cp /workspace/.jupyter/ipython_config.py /home/notebook/.ipython/profile_default/ipython_config.py \
+    && chmod +x /workspace/.jupyter/start-jupyter.sh \
     && chown -R notebook:notebook /workspace /home/notebook
 
 USER notebook
@@ -38,4 +46,4 @@ USER notebook
 EXPOSE 8888
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["sh", "-lc", "/workspace/.venv/bin/python -m ipykernel install --user --name localbricks --display-name 'Python (localbricks)' >/dev/null 2>&1 || true; /workspace/.venv/bin/jupyter lab --config=/workspace/.jupyter/jupyter_ai_config.py --ip=0.0.0.0 --port=8888 --no-browser --ServerApp.token=${JUPYTER_TOKEN:-localbricks} --ServerApp.allow_origin='*' --ServerApp.root_dir=/workspace"]
+CMD ["/workspace/.jupyter/start-jupyter.sh"]

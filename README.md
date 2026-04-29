@@ -6,7 +6,7 @@ It gives each developer:
 
 - JupyterLab notebooks
 - JupyterLab LSP and the Python language server
-- Jupyter AI configured for OpenAI
+- Optional Jupyter AI configured for OpenAI
 - Apache Spark 3.5.3
 - Delta Lake 3.2.1
 - Unity Catalog OSS
@@ -30,11 +30,13 @@ Clone the repository, then create your local environment file:
 cp .env.example .env
 ```
 
-Edit `.env` and set `OPENAI_API_KEY` if you want to run the OpenAI and Jupyter AI examples. Leave it empty if you only want Spark, Delta, Unity Catalog, LSP, and PDF processing.
+By default the stack starts without Jupyter AI enabled and does not require OpenAI API access or an OpenAI API key. Leave the OpenAI settings empty if you only want Spark, Delta, Unity Catalog, LSP, and PDF processing.
 
-Optional OpenAI-related settings:
+To opt in to OpenAI and Jupyter AI, edit `.env` and set:
 
 ```bash
+JUPYTER_AI_ENABLED=true
+OPENAI_API_KEY=...
 OPENAI_MODEL=gpt-4o-mini
 JUPYTER_AI_MODEL=gpt-4o-mini
 JUPYTER_AI_EMBEDDINGS_MODEL=text-embedding-3-small
@@ -55,10 +57,24 @@ http://localhost:8888/lab?token=localbricks
 JupyterLab starts with:
 
 - `jupyterlab-lsp` and `python-lsp-server` for Python code intelligence
-- Jupyter AI's chat UI configured to use the OpenAI provider
-- Jupyter AI magics configured to default to `openai-chat:${JUPYTER_AI_MODEL}`
+- Jupyter AI disabled by default
+- Jupyter AI's chat UI and magics configured for OpenAI only when `JUPYTER_AI_ENABLED=true`
 
 The OpenAI API key is read from `.env` through `OPENAI_API_KEY`; it is not committed into Jupyter configuration.
+
+## Proxy Builds
+
+If your environment needs an HTTP or HTTPS proxy to fetch Docker image dependencies, copy the override example:
+
+```bash
+cp docker-compose.override.example.yaml docker-compose.override.yaml
+```
+
+Edit `docker-compose.override.yaml` and replace the placeholder proxy addresses under `services.notebook.build.args` with the correct values for your network. Docker Compose loads `docker-compose.override.yaml` automatically, so the proxy build args are applied when you rebuild:
+
+```bash
+docker compose up --build
+```
 
 Unity Catalog runs inside the Compose network at:
 
@@ -66,10 +82,16 @@ Unity Catalog runs inside the Compose network at:
 http://uc-server:8080
 ```
 
-From your host machine, the Unity Catalog API is available at:
+Notebook code uses this internal REST API base:
 
 ```text
-http://localhost:8080/api/2.1/unity-catalog
+http://uc-server:8080/api/2.1/unity-catalog
+```
+
+From your host machine, use `localhost` and include a resource path. For example, open the catalog list at:
+
+```text
+http://localhost:8080/api/2.1/unity-catalog/catalogs
 ```
 
 ## Folders
@@ -119,7 +141,7 @@ notebooks/01_localbricks_databricks_basics.ipynb
 The notebook demonstrates:
 
 - loading environment variables
-- using Jupyter AI magics with OpenAI
+- optionally using Jupyter AI magics with OpenAI
 - starting Spark with Delta Lake and Unity Catalog
 - querying Unity Catalog schemas and tables
 - creating and querying Delta tables
