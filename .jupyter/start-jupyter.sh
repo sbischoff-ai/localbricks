@@ -1,6 +1,15 @@
 #!/bin/sh
 set -eu
 
+spark_proxy_opts="$(/workspace/.venv/bin/python /workspace/.jupyter/spark_proxy_opts.py)"
+if [ -n "$spark_proxy_opts" ]; then
+    if [ -n "${SPARK_SUBMIT_OPTS:-}" ]; then
+        export SPARK_SUBMIT_OPTS="${SPARK_SUBMIT_OPTS} $spark_proxy_opts"
+    else
+        export SPARK_SUBMIT_OPTS="$spark_proxy_opts"
+    fi
+fi
+
 /workspace/.venv/bin/python -m ipykernel install \
     --user \
     --name localbricks \

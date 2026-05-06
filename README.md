@@ -87,6 +87,8 @@ Docker Compose loads `docker-compose.override.yaml` automatically. The proxy var
 docker compose up --build
 ```
 
+The notebook startup also converts these proxy variables into Spark JVM proxy options, so Spark can resolve Maven dependencies such as Delta Lake and the Unity Catalog connector. Restart the containers after changing proxy values so new notebook kernels inherit the updated Spark settings.
+
 Unity Catalog runs inside the Compose network at:
 
 ```text
