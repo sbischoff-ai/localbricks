@@ -81,13 +81,13 @@ Copy the override example:
 cp docker-compose.override.example.yaml docker-compose.override.yaml
 ```
 
-Docker Compose loads `docker-compose.override.yaml` automatically. The proxy variables are applied as notebook build args and as runtime environment variables inside the notebook and Unity Catalog containers:
+Docker Compose loads `docker-compose.override.yaml` automatically. The proxy variables are applied as notebook build args and as runtime environment variables inside the notebook and Unity Catalog containers. Localbricks also appends `localhost`, `127.0.0.1`, and `uc-server` to the container no-proxy settings so internal Compose traffic does not go through the proxy:
 
 ```bash
 docker compose up --build
 ```
 
-The notebook startup also converts these proxy variables into Spark JVM proxy options, so Spark can resolve Maven dependencies such as Delta Lake and the Unity Catalog connector. Restart the containers after changing proxy values so new notebook kernels inherit the updated Spark settings.
+The notebook startup also converts these proxy variables into Spark JVM proxy options, so Spark can resolve Maven dependencies such as Delta Lake and the Unity Catalog connector while still bypassing the proxy for Unity Catalog. Restart the containers and start a fresh notebook kernel after changing proxy values so Spark reads the updated settings.
 
 Unity Catalog runs inside the Compose network at:
 

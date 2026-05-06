@@ -4,23 +4,23 @@ services:
       args:
         HTTP_PROXY: ${HTTP_PROXY}
         HTTPS_PROXY: ${HTTPS_PROXY}
-        NO_PROXY: ${NO_PROXY}
+        NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1,uc-server}${NO_PROXY:+,localhost,127.0.0.1,uc-server}
         http_proxy: ${http_proxy}
         https_proxy: ${https_proxy}
-        no_proxy: ${no_proxy}
+        no_proxy: ${no_proxy:-localhost,127.0.0.1,uc-server}${no_proxy:+,localhost,127.0.0.1,uc-server}
     environment:
       HTTP_PROXY: ${HTTP_PROXY}
       HTTPS_PROXY: ${HTTPS_PROXY}
-      NO_PROXY: ${NO_PROXY}
+      NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1,uc-server}${NO_PROXY:+,localhost,127.0.0.1,uc-server}
       http_proxy: ${http_proxy}
       https_proxy: ${https_proxy}
-      no_proxy: ${no_proxy}
+      no_proxy: ${no_proxy:-localhost,127.0.0.1,uc-server}${no_proxy:+,localhost,127.0.0.1,uc-server}
 
   uc-server:
     environment:
       HTTP_PROXY: ${HTTP_PROXY}
       HTTPS_PROXY: ${HTTPS_PROXY}
-      NO_PROXY: ${NO_PROXY}
+      NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1,uc-server}${NO_PROXY:+,localhost,127.0.0.1,uc-server}
       http_proxy: ${http_proxy}
       https_proxy: ${https_proxy}
-      no_proxy: ${no_proxy}
+      no_proxy: ${no_proxy:-localhost,127.0.0.1,uc-server}${no_proxy:+,localhost,127.0.0.1,uc-server}

@@ -6,6 +6,7 @@ PROXY_ENV = {
     "http": ("http_proxy", "HTTP_PROXY"),
     "https": ("https_proxy", "HTTPS_PROXY"),
 }
+LOCALBRICKS_NON_PROXY_HOSTS = ("localhost", "127.0.0.1", "uc-server")
 
 
 def proxy_url(name):
@@ -51,12 +52,14 @@ def add_proxy_options(scheme, proxy):
 def java_non_proxy_hosts():
     value = os.getenv("no_proxy") or os.getenv("NO_PROXY") or ""
     hosts = []
-    for item in value.split(","):
+    for item in [*value.split(","), *LOCALBRICKS_NON_PROXY_HOSTS]:
         host = item.strip()
         if not host:
             continue
         if host.startswith("."):
             host = f"*{host}"
+        if host in hosts:
+            continue
         hosts.append(host)
     return "|".join(hosts)
 
