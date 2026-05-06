@@ -64,15 +64,13 @@ The OpenAI API key is read from `.env` through `OPENAI_API_KEY`; it is not commi
 
 ## Proxy Configuration
 
-If your environment needs an HTTP or HTTPS proxy to fetch dependencies, export the proxy variables in the terminal where you run Docker Compose. The override file reuses the existing values from that shell for both image builds and running containers:
+If your environment needs an HTTP or HTTPS proxy to fetch dependencies, export the proxy endpoint variables in the terminal where you run Docker Compose. The override file reuses the existing proxy endpoint values from that shell for both image builds and running containers:
 
 ```bash
 export HTTP_PROXY=...
 export HTTPS_PROXY=...
-export NO_PROXY=localhost,127.0.0.1,uc-server
 export http_proxy=...
 export https_proxy=...
-export no_proxy=localhost,127.0.0.1,uc-server
 ```
 
 Copy the override example:
@@ -81,13 +79,19 @@ Copy the override example:
 cp docker-compose.override.example.yaml docker-compose.override.yaml
 ```
 
-Docker Compose loads `docker-compose.override.yaml` automatically. The proxy variables are applied as notebook build args and as runtime environment variables inside the notebook and Unity Catalog containers. Localbricks also appends `localhost`, `127.0.0.1`, and `uc-server` to the container no-proxy settings so internal Compose traffic does not go through the proxy:
+Docker Compose loads `docker-compose.override.yaml` automatically. The proxy endpoint variables are applied as notebook build args and as runtime environment variables inside the notebook and Unity Catalog containers. Host `NO_PROXY` values are not reused directly because hostnames differ inside the Compose network. Localbricks sets container no-proxy values for `localhost`, `127.0.0.1`, and `uc-server` so internal Compose traffic does not go through the proxy:
 
 ```bash
 docker compose up --build
 ```
 
-The notebook startup also converts these proxy variables into Spark JVM proxy options, so Spark can resolve Maven dependencies such as Delta Lake and the Unity Catalog connector while still bypassing the proxy for Unity Catalog. Restart the containers and start a fresh notebook kernel after changing proxy values so Spark reads the updated settings.
+If you need additional no-proxy hosts that are reachable from inside the containers, set `LOCALBRICKS_NO_PROXY_EXTRA` before running Docker Compose:
+
+```bash
+export LOCALBRICKS_NO_PROXY_EXTRA=internal.mirror,metadata.local
+```
+
+The notebook startup also converts these proxy variables into Spark JVM proxy options, so Spark can resolve Maven dependencies such as Delta Lake and the Unity Catalog connector while still bypassing the proxy for Unity Catalog. Recreate the notebook container and start a fresh notebook kernel after changing proxy values so Spark and Python clients read the updated settings.
 
 Unity Catalog runs inside the Compose network at:
 

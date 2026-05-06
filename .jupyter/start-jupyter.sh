@@ -1,6 +1,10 @@
 #!/bin/sh
 set -eu
 
+localbricks_no_proxy="$(/workspace/.venv/bin/python /workspace/.jupyter/container_no_proxy.py)"
+export NO_PROXY="$localbricks_no_proxy"
+export no_proxy="$localbricks_no_proxy"
+
 spark_proxy_opts="$(/workspace/.venv/bin/python /workspace/.jupyter/spark_proxy_opts.py)"
 if [ -n "$spark_proxy_opts" ]; then
     if [ -n "${SPARK_SUBMIT_OPTS:-}" ]; then
