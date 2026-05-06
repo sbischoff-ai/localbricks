@@ -62,15 +62,26 @@ JupyterLab starts with:
 
 The OpenAI API key is read from `.env` through `OPENAI_API_KEY`; it is not committed into Jupyter configuration.
 
-## Proxy Builds
+## Proxy Configuration
 
-If your environment needs an HTTP or HTTPS proxy to fetch Docker image dependencies, copy the override example:
+If your environment needs an HTTP or HTTPS proxy to fetch dependencies, export the proxy variables in the terminal where you run Docker Compose. The override file reuses the existing values from that shell for both image builds and running containers:
+
+```bash
+export HTTP_PROXY=...
+export HTTPS_PROXY=...
+export NO_PROXY=localhost,127.0.0.1,uc-server
+export http_proxy=...
+export https_proxy=...
+export no_proxy=localhost,127.0.0.1,uc-server
+```
+
+Copy the override example:
 
 ```bash
 cp docker-compose.override.example.yaml docker-compose.override.yaml
 ```
 
-Edit `docker-compose.override.yaml` and replace the placeholder proxy addresses under `services.notebook.build.args` with the correct values for your network. Docker Compose loads `docker-compose.override.yaml` automatically, so the proxy build args are applied when you rebuild:
+Docker Compose loads `docker-compose.override.yaml` automatically. The proxy variables are applied as notebook build args and as runtime environment variables inside the notebook and Unity Catalog containers:
 
 ```bash
 docker compose up --build
