@@ -7,9 +7,11 @@ It gives each developer:
 - JupyterLab notebooks
 - JupyterLab LSP and the Python language server
 - Optional Jupyter AI configured for OpenAI
-- Apache Spark 3.5.3
-- Delta Lake 3.2.1
+- Apache Spark 4.1.1
+- Delta Lake 4.2.0
 - Unity Catalog OSS
+- Automatic Spark sessions in notebook kernels
+- Local Spark Declarative Pipelines examples and runner
 - Python dependencies managed through `uv`
 - LangChain, OpenAI, and PDF processing libraries
 - Shared local folders for raw files and Delta tables
@@ -59,8 +61,11 @@ JupyterLab starts with:
 - `jupyterlab-lsp` and `python-lsp-server` for Python code intelligence
 - Jupyter AI disabled by default
 - Jupyter AI's chat UI and magics configured for OpenAI only when `JUPYTER_AI_ENABLED=true`
+- a Databricks-style `spark` variable already available in each notebook kernel
 
 The OpenAI API key is read from `.env` through `OPENAI_API_KEY`; it is not committed into Jupyter configuration.
+
+Set `LOCALBRICKS_AUTO_SPARK=false` if you want a notebook kernel without the automatic Spark session.
 
 ## Proxy Configuration
 
@@ -159,7 +164,7 @@ The notebook demonstrates:
 
 - loading environment variables
 - optionally using Jupyter AI magics with OpenAI
-- starting Spark with Delta Lake and Unity Catalog
+- using the automatic Spark session with Delta Lake and Unity Catalog
 - querying Unity Catalog schemas and tables
 - creating and querying Delta tables
 - parsing PDFs from `/workspace/data/raw/pdfs`
@@ -169,6 +174,26 @@ The notebook demonstrates:
 - optionally calling OpenAI with that UC tool
 
 The first Spark session may take a few minutes because Spark downloads the Delta Lake and Unity Catalog Spark connector JARs into the Docker volume `spark_ivy_cache`.
+
+## Local Declarative Pipelines
+
+Localbricks includes a small local runner for Python Spark Declarative Pipelines. It uses the open-source `pyspark.pipelines` decorators and materializes the registered datasets as local Delta tables through the same Spark and Unity Catalog setup as notebooks.
+
+Run the included example from a terminal inside JupyterLab:
+
+```bash
+cd /workspace
+python -m localbricks.pipelines.runner pipelines/example_pipeline.py --catalog unity --schema demo
+```
+
+Then query the generated tables from any notebook:
+
+```python
+spark.table("demo.pipeline_training_events").show()
+spark.table("demo.pipeline_topic_counts").show()
+```
+
+The runner supports local `@dp.materialized_view`, `@dp.table`, `@dp.temporary_view`, `dp.create_streaming_table`, and `@dp.append_flow` exercises. It is not the Databricks managed Lakeflow service: Databricks-only pipeline orchestration, expectations, permissions, monitoring, Auto Loader, and production workflow semantics are intentionally out of scope.
 
 ## Resetting
 
@@ -192,11 +217,11 @@ If you have `uv` installed on your host:
 
 ```bash
 uv sync
-uv run python -c "import jupyter_ai, jupyterlab_lsp, pylsp, pyspark, delta, langchain, openai"
+uv run python -c "import jupyter_ai, jupyterlab_lsp, pylsp, pyspark, delta, langchain, openai; import pyspark.pipelines"
 ```
 
 The Docker image installs from the same `pyproject.toml`, so host-side `uv` checks are optional.
 
 ## Notes
 
-This stack emulates the basics of Databricks notebook work locally. It is not a full Databricks Runtime replacement. Use it for training workflows around Spark, Delta tables, Unity Catalog naming, PDF ingestion, chunking, and LLM tool integration.
+This stack emulates the basics of Databricks notebook and pipeline work locally. It is not a full Databricks Runtime replacement. Use it for training workflows around Spark, Delta tables, Unity Catalog naming, PDF ingestion, chunking, LLM tool integration, and local representations of Lakeflow-style ETL pipelines.

@@ -10,8 +10,8 @@ services:
       UC_URI: http://uc-server:8080
       UC_API_URL: http://uc-server:8080/api/2.1/unity-catalog
       UC_HOST_API_URL: http://localhost:8080/api/2.1/unity-catalog/catalogs
-      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
-      JUPYTER_AI_ENABLED: ${JUPYTER_AI_ENABLED:-false}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5.3-codex}
+      JUPYTER_AI_ENABLED: ${JUPYTER_AI_ENABLED:-true}
       JUPYTER_TOKEN: ${JUPYTER_TOKEN:-localbricks}
       SPARK_LOCAL_IP: 127.0.0.1
     ports:
@@ -20,12 +20,12 @@ services:
       - ./notebooks:/workspace/notebooks
       - ./data:/workspace/data
       - ./warehouse:/workspace/warehouse
-      - spark_ivy_cache:/home/notebook/.ivy2
+      - spark_ivy_cache:/home/notebook/.ivy2.5.2
     depends_on:
       - uc-server
 
   uc-server:
-    image: unitycatalog/unitycatalog:latest
+    image: unitycatalog/unitycatalog:v0.4.0
     ports:
       - "8080:8080"
     volumes:

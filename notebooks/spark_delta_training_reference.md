@@ -2,9 +2,9 @@
 
 Use this guide next to `01_localbricks_databricks_basics.ipynb`.
 
-This is not meant to be a second notebook that everyone runs line by line. It is a teaching guide and exercise sheet. The example notebook creates the Spark session and writes the first tables. Your colleagues can then open a new notebook and work through the challenges here.
+This is not meant to be a second notebook that everyone runs line by line. It is a teaching guide and exercise sheet. The localbricks kernel creates the Spark session automatically. The example notebook writes the first tables; your colleagues can then open a new notebook and work through the challenges here.
 
-Assumption: the setup and Spark cells from the example notebook have already run.
+Assumption: the example notebook has already written the training tables.
 
 Main paths and tables:
 
@@ -74,6 +74,8 @@ spark.version
 spark.sql("SHOW SCHEMAS").show(truncate=False)
 spark.sql("SHOW TABLES IN demo").show(truncate=False)
 ```
+
+If `spark` is missing, restart the kernel. Localbricks can disable automatic Spark startup with `LOCALBRICKS_AUTO_SPARK=false`, but that should not be set for normal training sessions.
 
 ```python
 events_df = spark.table("demo.training_events")
@@ -870,11 +872,12 @@ spark.sql("DESCRIBE HISTORY demo.my_table").show(truncate=False)
 
 ## Official Links
 
-- PySpark DataFrame quickstart: https://spark.apache.org/docs/3.5.3/api/python/getting_started/quickstart_df.html
-- PySpark DataFrame API: https://spark.apache.org/docs/3.5.3/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.html
-- PySpark functions API: https://spark.apache.org/docs/3.5.3/api/python/reference/pyspark.sql/functions.html
-- Spark JSON files guide: https://spark.apache.org/docs/3.5.3/sql-data-sources-json.html
-- Spark data sources guide: https://spark.apache.org/docs/3.5.3/sql-data-sources.html
+- PySpark DataFrame quickstart: https://spark.apache.org/docs/latest/api/python/getting_started/quickstart_df.html
+- PySpark DataFrame API: https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.html
+- PySpark functions API: https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/functions.html
+- Spark Declarative Pipelines API: https://spark.apache.org/docs/latest/api/python/reference/pyspark.pipelines/index.html
+- Spark JSON files guide: https://spark.apache.org/docs/latest/sql-data-sources-json.html
+- Spark data sources guide: https://spark.apache.org/docs/latest/sql-data-sources.html
 - Delta Lake quick start: https://docs.delta.io/quick-start/
 - Databricks DataFrame tutorial: https://docs.databricks.com/gcp/en/getting-started/dataframes
 - Databricks Delta tutorial: https://docs.databricks.com/aws/en/delta/tutorial

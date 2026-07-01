@@ -34,9 +34,11 @@ WORKDIR /workspace
 COPY pyproject.toml uv.lock README.md ./
 RUN uv sync --locked --no-dev --no-cache
 COPY .jupyter /workspace/.jupyter
+COPY localbricks /workspace/localbricks
+COPY pipelines /workspace/pipelines
 
 RUN useradd --create-home --shell /bin/bash notebook \
-    && mkdir -p /workspace/notebooks /workspace/data /workspace/warehouse /home/notebook/.ivy2 /home/notebook/.ipython/profile_default \
+    && mkdir -p /workspace/notebooks /workspace/data /workspace/warehouse /home/notebook/.ivy2.5.2 /home/notebook/.ipython/profile_default \
     && cp /workspace/.jupyter/ipython_config.py /home/notebook/.ipython/profile_default/ipython_config.py \
     && chmod +x /workspace/.jupyter/start-jupyter.sh \
     && chown -R notebook:notebook /workspace /home/notebook
