@@ -1,6 +1,6 @@
 # localbricks
 
-Localbricks is a local training stack for Databricks-style data engineering work before a real Databricks workspace is available.
+Localbricks is a local training and testing stack for Databricks-style data engineering work without the real Databricks workspace being available.
 
 It gives each developer:
 
@@ -19,8 +19,6 @@ It gives each developer:
 ## Prerequisites
 
 Install these on your workstation:
-
-- Git, with access to the company Enterprise GitHub repository
 - Docker Desktop or Docker Engine with Docker Compose
 - Optional: `uv`, only needed if you also want to run checks outside Docker
 
@@ -84,7 +82,18 @@ Copy the override example:
 cp docker-compose.override.example.yaml docker-compose.override.yaml
 ```
 
-Docker Compose loads `docker-compose.override.yaml` automatically. The proxy endpoint variables are applied as notebook build args and as runtime environment variables inside the notebook and Unity Catalog containers. Host `NO_PROXY` values are not reused directly because hostnames differ inside the Compose network. Localbricks sets container no-proxy values for `localhost`, `127.0.0.1`, and `uc-server` so internal Compose traffic does not go through the proxy:
+Docker Compose loads `docker-compose.override.yaml` automatically. The proxy endpoint variables are applied as notebook build args and as runtime environment variables inside the notebook and Unity Catalog containers. Host `NO_PROXY` values are not reused directly because hostnames differ inside the Compose network. Localbricks sets container no-proxy values for `localhost`, `127.0.0.1`, and `uc-server` so internal Compose traffic does not go through the proxy.
+
+You might also want to mount your Databricks code files from your main project repo for easy access. Add this to the `docker-compose.override.yaml`:
+
+```yaml
+services:
+  notebook:
+    volumes:
+      - ../path/to/your/repo:/workspace/external
+```
+
+Then just start the stack using:
 
 ```bash
 docker compose up --build
